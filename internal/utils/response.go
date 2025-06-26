@@ -2,7 +2,6 @@ package utils
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -36,20 +35,18 @@ type PageResponse struct {
 // 成功响应
 func SuccessResponse(c *gin.Context, data interface{}) {
 	c.JSON(http.StatusOK, gin.H{
-		"code":      CodeSuccess,
-		"message":   "操作成功",
-		"data":      data,
-		"timestamp": time.Now().Unix(),
+		"code":    CodeSuccess,
+		"message": "操作成功",
+		"data":    data,
 	})
 }
 
 // 带消息的成功响应
 func SuccessResponseWithMessage(c *gin.Context, message string, data interface{}) {
 	c.JSON(http.StatusOK, gin.H{
-		"code":      CodeSuccess,
-		"message":   message,
-		"data":      data,
-		"timestamp": time.Now().Unix(),
+		"code":    CodeSuccess,
+		"message": message,
+		"data":    data,
 	})
 }
 
@@ -61,19 +58,17 @@ func PageResponseSuccess(c *gin.Context, items interface{}, pagination Paginatio
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code":      CodeSuccess,
-		"message":   "查询成功",
-		"data":      pageResponse,
-		"timestamp": time.Now().Unix(),
+		"code":    CodeSuccess,
+		"message": "查询成功",
+		"data":    pageResponse,
 	})
 }
 
 // 错误响应
 func ErrorResponse(c *gin.Context, code int, message string, errorDetails ...interface{}) {
 	response := gin.H{
-		"code":      code,
-		"message":   message,
-		"timestamp": time.Now().Unix(),
+		"code":    code,
+		"message": message,
 	}
 
 	// 添加错误详情

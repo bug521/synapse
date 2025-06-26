@@ -29,13 +29,13 @@ type DatabaseConfig struct {
 	Password     string
 	DBName       string
 	Charset      string
-	MaxOpenConns int
-	MaxIdleConns int
+	MaxOpenConns int `mapstructure:"max_open_conns"`
+	MaxIdleConns int `mapstructure:"max_idle_conns"`
 }
 
 type JWTConfig struct {
 	Secret      string
-	ExpireHours int
+	ExpireHours int `mapstructure:"expire_hours"`
 }
 
 type LogConfig struct {

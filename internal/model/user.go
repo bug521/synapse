@@ -8,9 +8,9 @@ import (
 )
 
 type User struct {
-	ID        uint64         `gorm:"primaryKey;autoIncrement;comment:用户ID"`
-	CreatedAt time.Time      `gorm:"type:datetime(3);default:CURRENT_TIMESTAMP(3);index;comment:接收时间"`
-	UpdatedAt time.Time      `gorm:"type:datetime(3);default:CURRENT_TIMESTAMP(3);index;comment:更新时间"`
+	ID        uint64         `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id"`
+	CreatedAt time.Time      `gorm:"type:datetime(3);default:CURRENT_TIMESTAMP(3);index;comment:接收时间" json:"createdAt"`
+	UpdatedAt time.Time      `gorm:"type:datetime(3);default:CURRENT_TIMESTAMP(3);index;comment:更新时间" json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 	Username  string         `gorm:"size:50;uniqueIndex;not null" json:"username"`
 	Password  string         `gorm:"size:128;not null" json:"-"`

@@ -20,10 +20,10 @@ const (
 
 // 分页信息结构
 type Pagination struct {
-	Page       int `json:"page"`        // 当前页码
-	PageSize   int `json:"page_size"`   // 每页数量
-	TotalCount int `json:"total_count"` // 总记录数
-	TotalPages int `json:"total_pages"` // 总页数
+	Page       int `json:"page"`       // 当前页码
+	PageSize   int `json:"pageSize"`   // 每页数量
+	TotalCount int `json:"totalCount"` // 总记录数
+	TotalPages int `json:"totalPages"` // 总页数
 }
 
 // 分页数据响应

@@ -144,7 +144,7 @@
 import { ref, reactive, onMounted, h } from 'vue'
 import { useMessage } from 'naive-ui'
 import { channelApi, type Channel, type CreateChannelRequest } from '../../api'
-
+import { NButton, NIcon } from 'naive-ui'
 const message = useMessage()
 
 // 响应式数据
@@ -221,9 +221,9 @@ const columns = [
   },
   {
     title: '创建时间',
-    key: 'created_at',
+    key: 'createdAt',
     width: 180,
-    render: (row: Channel) => new Date(row.created_at).toLocaleString()
+    render: (row: Channel) => new Date(row.createdAt).toLocaleString()
   },
   {
     title: '操作',
@@ -232,7 +232,7 @@ const columns = [
     render: (row: Channel) => {
       return h('div', { class: 'action-buttons' }, [
         h(
-          'n-button',
+          NButton,
           {
             size: 'small',
             onClick: () => handleView(row)
@@ -240,7 +240,7 @@ const columns = [
           { default: () => '查看' }
         ),
         h(
-          'n-button',
+          NButton,
           {
             size: 'small',
             type: 'primary',
@@ -249,7 +249,7 @@ const columns = [
           { default: () => '编辑' }
         ),
         h(
-          'n-button',
+          NButton,
           {
             size: 'small',
             type: 'error',
@@ -401,7 +401,7 @@ onMounted(() => {
   gap: 12px;
 }
 
-.action-buttons {
+:deep(.action-buttons) {
   display: flex;
   gap: 8px;
 }

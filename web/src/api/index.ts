@@ -40,34 +40,34 @@ api.interceptors.response.use(
 // 类型定义
 export interface Channel {
   id: number
-  user_id: number
+  userId: number
   name: string
   type: string
   credentials: Record<string, any>
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface Topic {
   id: number
-  user_id: number
+  userId: number
   name: string
-  webhook_key: string
-  sending_strategy: string
-  execution_mode: string
+  webhookKey: string
+  sendingStrategy: string
+  executionMode: string
   description: string
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface Routing {
-  topic_id: number
-  channel_id: number
+  topicId: number
+  channelId: number
   priority: number
-  variable_mappings: Record<string, any>
-  message_template: string
-  created_at: string
-  updated_at: string
+  variableMappings: Record<string, any>
+  messageTemplate: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface CreateChannelRequest {
@@ -84,30 +84,30 @@ export interface UpdateChannelRequest {
 
 export interface CreateTopicRequest {
   name: string
-  sending_strategy: string
-  execution_mode: string
+  sendingStrategy: string
+  executionMode: string
   description: string
 }
 
 export interface UpdateTopicRequest {
   name: string
-  sending_strategy: string
-  execution_mode: string
+  sendingStrategy: string
+  executionMode: string
   description: string
 }
 
 export interface CreateRoutingRequest {
-  topic_id: number
-  channel_id: number
+  topicId: number
+  channelId: number
   priority: number
-  variable_mappings: Record<string, any>
-  message_template: string
+  variableMappings: Record<string, any>
+  messageTemplate: string
 }
 
 export interface UpdateRoutingRequest {
   priority: number
-  variable_mappings: Record<string, any>
-  message_template: string
+  variableMappings: Record<string, any>
+  messageTemplate: string
 }
 
 // 通道API

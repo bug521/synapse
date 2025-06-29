@@ -64,6 +64,20 @@ const menuOptions = [
     ])
   },
   {
+    label: '通知通道',
+    key: 'channels',
+    icon: () => h('svg', { viewBox: '0 0 24 24' }, [
+      h('path', { fill: 'currentColor', d: 'M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z' })
+    ])
+  },
+  {
+    label: '消息主题',
+    key: 'topics',
+    icon: () => h('svg', { viewBox: '0 0 24 24' }, [
+      h('path', { fill: 'currentColor', d: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z' })
+    ])
+  },
+  {
     label: '个人资料',
     key: 'profile',
     icon: () => h('svg', { viewBox: '0 0 24 24' }, [
@@ -77,6 +91,9 @@ const activeKey = computed(() => {
   const routeMap: Record<string, string> = {
     'Home': 'home',
     'Dashboard': 'dashboard',
+    'Channels': 'channels',
+    'Topics': 'topics',
+    'TopicDetail': 'topics',
     'Profile': 'profile'
   }
   return routeMap[route.name as string] || 'home'
@@ -87,6 +104,8 @@ const handleMenuClick = (key: string) => {
   const routeMap: Record<string, string> = {
     'home': '/',
     'dashboard': '/dashboard',
+    'channels': '/channels',
+    'topics': '/topics',
     'profile': '/profile'
   }
   router.push(routeMap[key])

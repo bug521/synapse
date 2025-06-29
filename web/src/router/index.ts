@@ -33,6 +33,21 @@ const router = createRouter({
       name: 'Settings',
       component: () => import('../views/settings/index.vue'),
     },
+    {
+      path: '/channels',
+      name: 'Channels',
+      component: () => import('../views/channels/index.vue'),
+    },
+    {
+      path: '/topics',
+      name: 'Topics',
+      component: () => import('../views/topics/index.vue'),
+    },
+    {
+      path: '/topics/:id',
+      name: 'TopicDetail',
+      component: () => import('../views/topics/detail.vue'),
+    },
   ],
 })
 

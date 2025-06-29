@@ -41,7 +41,8 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMessage } from 'naive-ui'
-import { useUserStore } from '@/store/userStore'
+import { useUserStore } from '../../store/userStore'
+import api from '../../api'
 
 const router = useRouter()
 const message = useMessage()
@@ -73,22 +74,14 @@ const handleLogin = () => {
     if (!errors) {
       loading.value = true
       try {
-        // 模拟登录请求
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        const response = await api.post('/api/login', formValue)
+        const { user, token } = response.data || response
         
-        // 模拟登录成功
-        const userData = {
-          id: 1,
-          username: formValue.username,
-          email: `${formValue.username}@example.com`,
-          avatar: 'https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg'
-        }
-        
-        userStore.login(userData)
+        userStore.login(user, token)
         message.success('登录成功')
         router.push('/')
-      } catch (error) {
-        message.error('登录失败')
+      } catch (error: any) {
+        message.error('登录失败: ' + (error.response?.data?.message || error.message || '未知错误'))
       } finally {
         loading.value = false
       }

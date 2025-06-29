@@ -31,11 +31,12 @@ func (s *UserService) Login(username, password string) (*model.User, error) {
 	if !utils.CheckPassword(password, user.Password) {
 		return nil, gorm.ErrRecordNotFound
 	}
+	user.Password = ""
 
 	return user, nil
 }
 
-func (s *UserService) GetUserProfile(id uint) (*model.User, error) {
+func (s *UserService) GetUserProfile(id uint64) (*model.User, error) {
 	return s.userRepo.FindByID(id)
 }
 
@@ -43,6 +44,6 @@ func (s *UserService) UpdateUser(user *model.User) error {
 	return s.userRepo.Update(user)
 }
 
-func (s *UserService) DeleteUser(id uint) error {
+func (s *UserService) DeleteUser(id uint64) error {
 	return s.userRepo.Delete(id)
 }

@@ -1,3 +1,69 @@
-storage/logs/
-.idea/
+# 二进制文件
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# 测试二进制文件
+*.test
+
+# 覆盖率文件
+*.out
+
+# 依赖目录
+vendor/
+
+# IDE文件
 .vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 日志文件
+*.log
+logs/
+
+# 配置文件
+config/config.yaml
+.env
+
+# 数据库文件
+*.db
+*.sqlite
+
+# 临时文件
+tmp/
+temp/
+
+# 构建文件
+dist/
+build/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 前端构建文件
+web/dist/
+web/node_modules/
+
+# Docker
+.dockerignore
+
+# 存储文件
+storage/logs/*
+!storage/logs/.gitkeep

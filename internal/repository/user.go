@@ -18,7 +18,7 @@ func (r *UserRepository) Create(user *model.User) error {
 	return r.db.Create(user).Error
 }
 
-func (r *UserRepository) FindByID(id uint) (*model.User, error) {
+func (r *UserRepository) FindByID(id uint64) (*model.User, error) {
 	var user model.User
 	err := r.db.First(&user, id).Error
 	return &user, err
@@ -34,6 +34,6 @@ func (r *UserRepository) Update(user *model.User) error {
 	return r.db.Save(user).Error
 }
 
-func (r *UserRepository) Delete(id uint) error {
+func (r *UserRepository) Delete(id uint64) error {
 	return r.db.Delete(&model.User{}, id).Error
 }

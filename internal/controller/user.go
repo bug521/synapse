@@ -92,7 +92,7 @@ func (c *UserController) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"token": token})
+	ctx.JSON(http.StatusOK, gin.H{"token": token, "user": user})
 }
 
 // GetProfile 获取用户信息
@@ -112,7 +112,7 @@ func (c *UserController) GetProfile(ctx *gin.Context) {
 		return
 	}
 
-	user, err := c.userService.GetUserProfile(userID.(uint))
+	user, err := c.userService.GetUserProfile(userID.(uint64))
 	if err != nil {
 		utils.ErrorResponse(ctx, http.StatusInternalServerError, "获取用户信息失败", err.Error())
 		return
@@ -149,7 +149,7 @@ func (c *UserController) UpdateProfile(ctx *gin.Context) {
 	}
 
 	// 确保更新的是自己的账户
-	user.ID = userID.(uint)
+	user.ID = userID.(uint64)
 
 	if err := c.userService.UpdateUser(&user); err != nil {
 		utils.ErrorResponse(ctx, http.StatusInternalServerError, "更新失败", err.Error())
@@ -178,7 +178,7 @@ func (c *UserController) DeleteAccount(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.userService.DeleteUser(userID.(uint)); err != nil {
+	if err := c.userService.DeleteUser(userID.(uint64)); err != nil {
 		utils.ErrorResponse(ctx, http.StatusInternalServerError, "删除失败", err.Error())
 		return
 	}

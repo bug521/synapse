@@ -91,7 +91,9 @@ func ErrorResponse(c *gin.Context, code int, message string, errorDetails ...int
 		}
 	}
 
-	c.JSON(getStatusCode(code), response)
+	//c.JSON(getStatusCode(code), response)
+	//c.Abort()
+	c.AbortWithStatusJSON(getStatusCode(code), response)
 }
 
 // 验证错误响应
@@ -101,6 +103,9 @@ func ValidationErrorResponse(c *gin.Context, errors map[string]string) {
 
 // 根据业务状态码获取HTTP状态码
 func getStatusCode(bizCode int) int {
+	if bizCode < 10000 {
+		return bizCode
+	}
 	switch bizCode {
 	case CodeBadRequest, CodeValidationError:
 		return http.StatusBadRequest

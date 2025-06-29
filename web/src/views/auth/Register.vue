@@ -52,6 +52,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMessage } from 'naive-ui'
+import api from '../../api'
 
 const router = useRouter()
 const message = useMessage()
@@ -101,13 +102,16 @@ const handleRegister = () => {
     if (!errors) {
       loading.value = true
       try {
-        // 模拟注册请求
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await api.post('/api/register', {
+          username: formValue.username,
+          email: formValue.email,
+          password: formValue.password
+        })
         
         message.success('注册成功，请登录')
         router.push('/login')
-      } catch (error) {
-        message.error('注册失败')
+      } catch (error: any) {
+        message.error('注册失败: ' + (error.response?.data?.message || error.message || '未知错误'))
       } finally {
         loading.value = false
       }

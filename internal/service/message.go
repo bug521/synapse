@@ -1,9 +1,11 @@
 package service
 
 import (
+	"encoding/json"
 	"errors"
 	"synapse/internal/model"
 	"synapse/internal/repository"
+	"synapse/pkg/notifier"
 
 	"gorm.io/gorm"
 )
@@ -169,20 +171,46 @@ func (s *MessageService) sendToChannel(message *model.Message, routing *model.Ro
 
 // sendToTelegram 发送到Telegram
 func (s *MessageService) sendToTelegram(message *model.Message, channel *model.Channel, routing *model.Routing) error {
-	// TODO: 实现Telegram发送逻辑
-	// 1. 解析Telegram配置
-	// 2. 渲染消息模板
-	// 3. 调用Telegram API
-	return nil
+	var cfg struct {
+		BotToken string `json:"botToken"`
+		ChatID   string `json:"chatId"`
+		Proxy    string `json:"proxy"`
+	}
+	b, _ := json.Marshal(channel.Credentials)
+	if err := json.Unmarshal(b, &cfg); err != nil {
+		return err
+	}
+	return notifier.SendTelegramMessage(notifier.TelegramConfig{
+		Token:  cfg.BotToken,
+		ChatID: cfg.ChatID,
+		Proxy:  cfg.Proxy,
+	}, message.Content)
 }
 
 // sendToEmail 发送到Email
 func (s *MessageService) sendToEmail(message *model.Message, channel *model.Channel, routing *model.Routing) error {
-	// TODO: 实现Email发送逻辑
-	// 1. 解析Email配置
-	// 2. 渲染消息模板
-	// 3. 发送邮件
-	return nil
+	var cfg struct {
+		SMTPHost     string `json:"smtpHost"`
+		SMTPPort     int    `json:"smtpPort"`
+		SMTPUsername string `json:"smtpUsername"`
+		SMTPPassword string `json:"smtpPassword"`
+		Sender       string `json:"sender"`
+		To           string `json:"to"`
+		Proxy        string `json:"proxy"`
+	}
+	b, _ := json.Marshal(channel.Credentials)
+	if err := json.Unmarshal(b, &cfg); err != nil {
+		return err
+	}
+	return notifier.SendEmail(notifier.EmailConfig{
+		Host:     cfg.SMTPHost,
+		Port:     cfg.SMTPPort,
+		Username: cfg.SMTPUsername,
+		Password: cfg.SMTPPassword,
+		From:     cfg.Sender,
+		To:       cfg.To,
+		Proxy:    cfg.Proxy,
+	}, message.Title, message.Content)
 }
 
 // sendToSlack 发送到Slack
@@ -196,10 +224,26 @@ func (s *MessageService) sendToSlack(message *model.Message, channel *model.Chan
 
 // sendToWebhook 发送到Webhook
 func (s *MessageService) sendToWebhook(message *model.Message, channel *model.Channel, routing *model.Routing) error {
-	// TODO: 实现Webhook发送逻辑
-	// 1. 解析Webhook配置
-	// 2. 渲染消息模板
-	// 3. 发送HTTP请求
+	var cfg struct {
+		URL     string            `json:"url"`
+		Method  string            `json:"method"`
+		Headers map[string]string `json:"headers"`
+		Proxy   string            `json:"proxy"`
+	}
+	b, _ := json.Marshal(channel.Credentials)
+	if err := json.Unmarshal(b, &cfg); err != nil {
+		return err
+	}
+	resp, err := notifier.SendWebhook(notifier.WebhookConfig{
+		URL:     cfg.URL,
+		Method:  cfg.Method,
+		Headers: cfg.Headers,
+		Proxy:   cfg.Proxy,
+	}, []byte(message.Content))
+	if err != nil {
+		return err
+	}
+	_ = resp // 可记录响应内容
 	return nil
 }
 

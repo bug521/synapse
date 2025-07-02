@@ -7,6 +7,7 @@ import (
 	"synapse/internal/model"
 	"synapse/internal/service"
 	"synapse/internal/utils"
+	"synapse/pkg/notifier"
 
 	"github.com/gin-gonic/gin"
 )
@@ -216,4 +217,90 @@ func (c *ChannelController) DeleteChannel(ctx *gin.Context) {
 	}
 
 	ctx.Status(http.StatusNoContent)
+}
+
+// TestTelegramChannel 测试 Telegram 通道
+func TestTelegramChannel(ctx *gin.Context) {
+	type Req struct {
+		BotToken string `json:"botToken"`
+		ChatID   string `json:"chatId"`
+		Proxy    string `json:"proxy"`
+		Content  string `json:"content"`
+	}
+	var req Req
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(ctx, 400, "参数错误", err.Error())
+		return
+	}
+	err := notifier.SendTelegramMessage(notifier.TelegramConfig{
+		Token:  req.BotToken,
+		ChatID: req.ChatID,
+		Proxy:  req.Proxy,
+	}, req.Content)
+	if err != nil {
+		utils.ErrorResponse(ctx, 500, "发送失败", err.Error())
+		return
+	}
+	ctx.JSON(200, gin.H{"message": "发送成功"})
+}
+
+// TestEmailChannel 测试 Email 通道
+func TestEmailChannel(ctx *gin.Context) {
+	type Req struct {
+		SMTPHost     string `json:"smtpHost"`
+		SMTPPort     int    `json:"smtpPort"`
+		SMTPUsername string `json:"smtpUsername"`
+		SMTPPassword string `json:"smtpPassword"`
+		Sender       string `json:"sender"`
+		To           string `json:"to"`
+		Proxy        string `json:"proxy"`
+		Title        string `json:"title"`
+		Content      string `json:"content"`
+	}
+	var req Req
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(ctx, 400, "参数错误", err.Error())
+		return
+	}
+	err := notifier.SendEmail(notifier.EmailConfig{
+		Host:     req.SMTPHost,
+		Port:     req.SMTPPort,
+		Username: req.SMTPUsername,
+		Password: req.SMTPPassword,
+		From:     req.Sender,
+		To:       req.To,
+		Proxy:    req.Proxy,
+	}, req.Title, req.Content)
+	if err != nil {
+		utils.ErrorResponse(ctx, 500, "发送失败", err.Error())
+		return
+	}
+	ctx.JSON(200, gin.H{"message": "发送成功"})
+}
+
+// TestWebhookChannel 测试 Webhook 通道
+func TestWebhookChannel(ctx *gin.Context) {
+	type Req struct {
+		URL     string            `json:"url"`
+		Method  string            `json:"method"`
+		Headers map[string]string `json:"headers"`
+		Proxy   string            `json:"proxy"`
+		Content string            `json:"content"`
+	}
+	var req Req
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		utils.ErrorResponse(ctx, 400, "参数错误", err.Error())
+		return
+	}
+	resp, err := notifier.SendWebhook(notifier.WebhookConfig{
+		URL:     req.URL,
+		Method:  req.Method,
+		Headers: req.Headers,
+		Proxy:   req.Proxy,
+	}, []byte(req.Content))
+	if err != nil {
+		utils.ErrorResponse(ctx, 500, "发送失败", err.Error())
+		return
+	}
+	ctx.JSON(200, gin.H{"message": "发送成功", "response": resp})
 }

@@ -65,6 +65,10 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 			channels.DELETE("/:id", channelController.DeleteChannel)
 			// 通道路由相关
 			channels.GET("/:id/routings", routingController.GetRoutingsByChannel)
+			// 通道测试接口
+			channels.POST("/test/telegram", controller.TestTelegramChannel)
+			channels.POST("/test/email", controller.TestEmailChannel)
+			channels.POST("/test/webhook", controller.TestWebhookChannel)
 		}
 
 		// 主题相关

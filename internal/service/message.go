@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"html/template"
+	"sort"
 	"synapse/internal/model"
 	"synapse/internal/repository"
 	"synapse/pkg/notifier"
@@ -131,6 +132,11 @@ func (s *MessageService) processAllStrategy(message *model.Message, routings []m
 
 // processFailoverStrategy 处理"故障转移"策略
 func (s *MessageService) processFailoverStrategy(message *model.Message, routings []model.Routing) error {
+	// sort routings by priority
+	sort.Slice(routings, func(i, j int) bool {
+		return routings[i].Priority > routings[j].Priority
+	})
+
 	for _, routing := range routings {
 		if err := s.sendToChannel(message, &routing); err != nil {
 			// 记录失败日志，继续尝试下一个通道

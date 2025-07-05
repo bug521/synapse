@@ -22,10 +22,7 @@
     </n-card>
 
     <!-- 创建/编辑主题模态框 -->
-    <n-modal v-model:show="showCreateModal" preset="card" style="width: 600px">
-      <template #header>
-        <h3>{{ editingTopic ? '编辑主题' : '创建主题' }}</h3>
-      </template>
+    <n-modal v-model:show="showCreateModal" :title="editingTopic ? '编辑主题' : '创建主题'" preset="card" style="width: 600px">
       
       <n-form
         ref="formRef"
@@ -39,17 +36,17 @@
           <n-input v-model:value="formData.name" placeholder="请输入主题名称" />
         </n-form-item>
         
-        <n-form-item label="发送策略" path="sending_strategy">
+        <n-form-item label="发送策略" path="sendingStrategy">
           <n-select
-            v-model:value="formData.sending_strategy"
+            v-model:value="formData.sendingStrategy"
             :options="sendingStrategyOptions"
             placeholder="请选择发送策略"
           />
         </n-form-item>
         
-        <n-form-item label="执行模式" path="execution_mode">
+        <n-form-item label="执行模式" path="executionMode">
           <n-select
-            v-model:value="formData.execution_mode"
+            v-model:value="formData.executionMode"
             :options="executionModeOptions"
             placeholder="请选择执行模式"
           />
@@ -98,7 +95,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, h } from 'vue'
 import { useRouter } from 'vue-router'
-import { useMessage } from 'naive-ui'
+import {NButton, useMessage} from 'naive-ui'
 import { topicApi, type Topic, type CreateTopicRequest } from '../../api'
 
 const router = useRouter()
@@ -118,8 +115,8 @@ const formRef = ref()
 // 表单数据
 const formData = reactive<CreateTopicRequest>({
   name: '',
-  sending_strategy: 'all',
-  execution_mode: 'async',
+  sendingStrategy: 'all',
+  executionMode: 'async',
   description: ''
 })
 
@@ -167,49 +164,49 @@ const columns = [
   },
   {
     title: 'Webhook Key',
-    key: 'webhook_key',
+    key: 'webhookKey',
     width: 200,
     render: (row: Topic) => {
       return h('div', { class: 'webhook-key' }, [
-        h('span', { class: 'key-text' }, row.webhook_key.substring(0, 8) + '...'),
+        h('span', { class: 'key-text' }, row.webhookKey.substring(0, 8) + '...'),
         h('n-button', {
           size: 'tiny',
           type: 'primary',
           ghost: true,
-          onClick: () => copyWebhookKey(row.webhook_key)
+          onClick: () => copyWebhookKey(row.webhookKey)
         }, { default: () => '复制' })
       ])
     }
   },
   {
     title: '发送策略',
-    key: 'sending_strategy',
+    key: 'sendingStrategy',
     width: 120,
     render: (row: Topic) => {
       const strategyMap: Record<string, string> = {
         'all': '发送给所有',
         'failover': '故障转移'
       }
-      return strategyMap[row.sending_strategy] || row.sending_strategy
+      return strategyMap[row.sendingStrategy] || row.sendingStrategy
     }
   },
   {
     title: '执行模式',
-    key: 'execution_mode',
+    key: 'executionMode',
     width: 120,
     render: (row: Topic) => {
       const modeMap: Record<string, string> = {
         'async': '异步',
         'sync': '同步'
       }
-      return modeMap[row.execution_mode] || row.execution_mode
+      return modeMap[row.executionMode] || row.executionMode
     }
   },
   {
     title: '创建时间',
-    key: 'created_at',
+    key: 'createdAt',
     width: 180,
-    render: (row: Topic) => new Date(row.created_at).toLocaleString()
+    render: (row: Topic) => new Date(row.createdAt).toLocaleString()
   },
   {
     title: '操作',
@@ -218,7 +215,7 @@ const columns = [
     render: (row: Topic) => {
       return h('div', { class: 'action-buttons' }, [
         h(
-          'n-button',
+          NButton,
           {
             size: 'small',
             type: 'primary',
@@ -227,7 +224,7 @@ const columns = [
           { default: () => '详情' }
         ),
         h(
-          'n-button',
+            NButton,
           {
             size: 'small',
             onClick: () => handleRegenerateKey(row)
@@ -235,7 +232,7 @@ const columns = [
           { default: () => '重新生成Key' }
         ),
         h(
-          'n-button',
+            NButton,
           {
             size: 'small',
             type: 'info',
@@ -244,7 +241,7 @@ const columns = [
           { default: () => '编辑' }
         ),
         h(
-          'n-button',
+            NButton,
           {
             size: 'small',
             type: 'error',
@@ -300,8 +297,8 @@ const handleSubmit = async () => {
 const handleEdit = (topic: Topic) => {
   editingTopic.value = topic
   formData.name = topic.name
-  formData.sending_strategy = topic.sending_strategy
-  formData.execution_mode = topic.execution_mode
+  formData.sendingStrategy = topic.sendingStrategy
+  formData.executionMode = topic.executionMode
   formData.description = topic.description
   showCreateModal.value = true
 }
@@ -352,8 +349,8 @@ const handleDelete = async () => {
 const resetForm = () => {
   editingTopic.value = null
   formData.name = ''
-  formData.sending_strategy = 'all'
-  formData.execution_mode = 'async'
+  formData.sendingStrategy = 'all'
+  formData.executionMode = 'async'
   formData.description = ''
   formRef.value?.restoreValidation()
 }
@@ -408,5 +405,10 @@ onMounted(() => {
   font-family: monospace;
   font-size: 12px;
   color: #666;
+}
+
+:deep(.action-buttons) {
+  display: flex;
+  gap: 8px;
 }
 </style> 

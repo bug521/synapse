@@ -9,17 +9,17 @@ import (
 
 // Claims 自定义声明结构体
 type Claims struct {
-	UserID uint64 `json:"user_id"`
+	UserId uint64 `json:"userId"`
 	jwt.StandardClaims
 }
 
 // GenerateToken 生成JWT令牌
-func GenerateToken(userID uint64) (string, error) {
+func GenerateToken(UserId uint64) (string, error) {
 	cfg := config.GlobalConfig.JWT
 
 	expireTime := time.Now().Add(time.Duration(cfg.ExpireHours) * time.Hour)
 	claims := Claims{
-		UserID: userID,
+		UserId: UserId,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    "gin-app",

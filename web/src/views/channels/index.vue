@@ -22,10 +22,7 @@
     </n-card>
 
     <!-- 创建/编辑通道模态框 -->
-    <n-modal v-model:show="showCreateModal" preset="card" style="width: 600px">
-      <template #header>
-        <h3>{{ editingChannel ? '编辑通道' : '添加通道' }}</h3>
-      </template>
+    <n-modal v-model:show="showCreateModal" :title="editingChannel ? '编辑通道' : '添加通道'" preset="card" style="width: 600px" @close="handleModalClose">
       
       <n-form
         ref="formRef"
@@ -50,22 +47,23 @@
         
         <!-- Telegram配置 -->
         <template v-if="formData.type === 'telegram'">
-          <n-form-item label="Bot Token" path="credentials.bot_token">
+          <n-form-item label="Bot Token" path="credentials.botToken">
             <n-input
-              v-model:value="formData.credentials.bot_token"
+              v-model:value="formData.credentials.botToken"
               placeholder="请输入Telegram Bot Token"
               type="password"
+              show-password-on="click"
             />
           </n-form-item>
-          <n-form-item label="Chat ID" path="credentials.chat_id">
+          <n-form-item label="Chat ID" path="credentials.chatId">
             <n-input
-              v-model:value="formData.credentials.chat_id"
+              v-model:value="formData.credentials.chatId"
               placeholder="请输入Chat ID"
             />
           </n-form-item>
-          <n-form-item label="解析模式" path="credentials.parse_mode">
+          <n-form-item label="解析模式" path="credentials.parseMode">
             <n-select
-              v-model:value="formData.credentials.parse_mode"
+              v-model:value="formData.credentials.parseMode"
               :options="parseModeOptions"
               placeholder="请选择解析模式"
             />
@@ -74,29 +72,29 @@
         
         <!-- Email配置 -->
         <template v-if="formData.type === 'email'">
-          <n-form-item label="SMTP主机" path="credentials.smtp_host">
+          <n-form-item label="SMTP主机" path="credentials.smtpHost">
             <n-input
-              v-model:value="formData.credentials.smtp_host"
+              v-model:value="formData.credentials.smtpHost"
               placeholder="例如: smtp.gmail.com"
             />
           </n-form-item>
-          <n-form-item label="SMTP端口" path="credentials.smtp_port">
+          <n-form-item label="SMTP端口" path="credentials.smtpPort">
             <n-input-number
-              v-model:value="formData.credentials.smtp_port"
+              v-model:value="formData.credentials.smtpPort"
               placeholder="例如: 587"
               :min="1"
               :max="65535"
             />
           </n-form-item>
-          <n-form-item label="用户名" path="credentials.smtp_username">
+          <n-form-item label="用户名" path="credentials.smtpUsername">
             <n-input
-              v-model:value="formData.credentials.smtp_username"
+              v-model:value="formData.credentials.smtpUsername"
               placeholder="请输入邮箱用户名"
             />
           </n-form-item>
-          <n-form-item label="密码" path="credentials.smtp_password">
+          <n-form-item label="密码" path="credentials.smtpPassword">
             <n-input
-              v-model:value="formData.credentials.smtp_password"
+              v-model:value="formData.credentials.smtpPassword"
               placeholder="请输入邮箱密码"
               type="password"
             />
@@ -169,14 +167,13 @@ const formData = reactive<CreateChannelRequest>({
 const channelTypeOptions = [
   { label: 'Telegram', value: 'telegram' },
   { label: 'Email', value: 'email' },
-  { label: 'Slack', value: 'slack' },
   { label: 'Webhook', value: 'webhook' }
 ]
 
 // 解析模式选项
 const parseModeOptions = [
   { label: 'HTML', value: 'HTML' },
-  { label: 'Markdown', value: 'Markdown' }
+  { label: 'MarkdownV2', value: 'MarkdownV2' }
 ]
 
 // 表单验证规则
@@ -213,7 +210,6 @@ const columns = [
       const typeMap: Record<string, string> = {
         telegram: 'Telegram',
         email: 'Email',
-        slack: 'Slack',
         webhook: 'Webhook'
       }
       return typeMap[row.type] || row.type
@@ -231,14 +227,6 @@ const columns = [
     width: 200,
     render: (row: Channel) => {
       return h('div', { class: 'action-buttons' }, [
-        h(
-          NButton,
-          {
-            size: 'small',
-            onClick: () => handleView(row)
-          },
-          { default: () => '查看' }
-        ),
         h(
           NButton,
           {
@@ -287,16 +275,16 @@ const handleTypeChange = (type: string) => {
   // 根据类型设置默认凭证结构
   if (type === 'telegram') {
     formData.credentials = {
-      bot_token: '',
-      chat_id: '',
-      parse_mode: 'HTML'
+      botToken: '',
+      chatId: '',
+      parseMode: 'HTML'
     }
   } else if (type === 'email') {
     formData.credentials = {
-      smtp_host: '',
-      smtp_port: 587,
-      smtp_username: '',
-      smtp_password: '',
+      smtpHost: '',
+      smtpPort: 587,
+      smtpUsername: '',
+      smtpPassword: '',
       sender: ''
     }
   }
@@ -330,11 +318,6 @@ const handleEdit = (channel: Channel) => {
   formData.type = channel.type
   formData.credentials = { ...channel.credentials }
   showCreateModal.value = true
-}
-
-const handleView = (channel: Channel) => {
-  // TODO: 实现查看详情功能
-  message.info('查看功能开发中')
 }
 
 const handleDeleteClick = (channel: Channel) => {

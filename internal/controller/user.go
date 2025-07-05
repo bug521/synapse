@@ -106,7 +106,7 @@ func (c *UserController) Login(ctx *gin.Context) {
 // @Failure 401 {object} utils.ErrorResponse
 // @Router /profile [get]
 func (c *UserController) GetProfile(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -136,7 +136,7 @@ func (c *UserController) GetProfile(ctx *gin.Context) {
 // @Failure 401 {object} utils.ErrorResponse
 // @Router /profile [put]
 func (c *UserController) UpdateProfile(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -172,7 +172,7 @@ func (c *UserController) UpdateProfile(ctx *gin.Context) {
 // @Failure 401 {object} utils.ErrorResponse
 // @Router /profile [delete]
 func (c *UserController) DeleteAccount(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return

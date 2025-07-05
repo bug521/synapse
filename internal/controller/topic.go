@@ -21,8 +21,8 @@ func NewTopicController(topicService *service.TopicService) *TopicController {
 
 type CreateTopicRequest struct {
 	Name            string `json:"name" binding:"required,min=1,max=255"`
-	SendingStrategy string `json:"sending_strategy" binding:"required"`
-	ExecutionMode   string `json:"execution_mode" binding:"required"`
+	SendingStrategy string `json:"sendingStrategy" binding:"required"`
+	ExecutionMode   string `json:"executionMode" binding:"required"`
 	Description     string `json:"description"`
 }
 
@@ -39,7 +39,7 @@ type CreateTopicRequest struct {
 // @Failure 401 {object} utils.ErrorResponse
 // @Router /topics [post]
 func (c *TopicController) CreateTopic(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -78,7 +78,7 @@ func (c *TopicController) CreateTopic(ctx *gin.Context) {
 // @Failure 401 {object} utils.ErrorResponse
 // @Router /topics [get]
 func (c *TopicController) GetTopics(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -107,7 +107,7 @@ func (c *TopicController) GetTopics(ctx *gin.Context) {
 // @Failure 404 {object} utils.ErrorResponse
 // @Router /topics/{id} [get]
 func (c *TopicController) GetTopic(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -131,8 +131,8 @@ func (c *TopicController) GetTopic(ctx *gin.Context) {
 
 type UpdateTopicRequest struct {
 	Name            string `json:"name" binding:"required,min=1,max=255"`
-	SendingStrategy string `json:"sending_strategy" binding:"required"`
-	ExecutionMode   string `json:"execution_mode" binding:"required"`
+	SendingStrategy string `json:"sendingStrategy" binding:"required"`
+	ExecutionMode   string `json:"executionMode" binding:"required"`
 	Description     string `json:"description"`
 }
 
@@ -151,7 +151,7 @@ type UpdateTopicRequest struct {
 // @Failure 404 {object} utils.ErrorResponse
 // @Router /topics/{id} [put]
 func (c *TopicController) UpdateTopic(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -201,7 +201,7 @@ func (c *TopicController) UpdateTopic(ctx *gin.Context) {
 // @Failure 404 {object} utils.ErrorResponse
 // @Router /topics/{id} [delete]
 func (c *TopicController) DeleteTopic(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -236,7 +236,7 @@ func (c *TopicController) DeleteTopic(ctx *gin.Context) {
 // @Failure 404 {object} utils.ErrorResponse
 // @Router /topics/{id}/regenerate-key [post]
 func (c *TopicController) RegenerateWebhookKey(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return

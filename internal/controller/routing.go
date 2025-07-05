@@ -20,11 +20,11 @@ func NewRoutingController(routingService *service.RoutingService) *RoutingContro
 }
 
 type CreateRoutingRequest struct {
-	TopicID          uint64                 `json:"topic_id" binding:"required"`
-	ChannelID        uint64                 `json:"channel_id" binding:"required"`
+	TopicID          uint64                 `json:"topicId" binding:"required"`
+	ChannelID        uint64                 `json:"channelId" binding:"required"`
 	Priority         int                    `json:"priority"`
-	VariableMappings map[string]interface{} `json:"variable_mappings"`
-	MessageTemplate  string                 `json:"message_template"`
+	VariableMappings map[string]interface{} `json:"variableMappings"`
+	MessageTemplate  string                 `json:"messageTemplate"`
 }
 
 // CreateRouting 创建路由
@@ -40,7 +40,7 @@ type CreateRoutingRequest struct {
 // @Failure 401 {object} utils.ErrorResponse
 // @Router /routings [post]
 func (c *RoutingController) CreateRouting(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -81,7 +81,7 @@ func (c *RoutingController) CreateRouting(ctx *gin.Context) {
 // @Failure 401 {object} utils.ErrorResponse
 // @Router /topics/{id}/routings [get]
 func (c *RoutingController) GetRoutingsByTopic(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -116,7 +116,7 @@ func (c *RoutingController) GetRoutingsByTopic(ctx *gin.Context) {
 // @Failure 401 {object} utils.ErrorResponse
 // @Router /channels/{id}/routings [get]
 func (c *RoutingController) GetRoutingsByChannel(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -140,8 +140,8 @@ func (c *RoutingController) GetRoutingsByChannel(ctx *gin.Context) {
 
 type UpdateRoutingRequest struct {
 	Priority         int                    `json:"priority"`
-	VariableMappings map[string]interface{} `json:"variable_mappings"`
-	MessageTemplate  string                 `json:"message_template"`
+	VariableMappings map[string]interface{} `json:"variableMappings"`
+	MessageTemplate  string                 `json:"messageTemplate"`
 }
 
 // UpdateRouting 更新路由
@@ -160,7 +160,7 @@ type UpdateRoutingRequest struct {
 // @Failure 404 {object} utils.ErrorResponse
 // @Router /routings/{topic_id}/{channel_id} [put]
 func (c *RoutingController) UpdateRouting(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -217,7 +217,7 @@ func (c *RoutingController) UpdateRouting(ctx *gin.Context) {
 // @Failure 404 {object} utils.ErrorResponse
 // @Router /routings/{topic_id}/{channel_id} [delete]
 func (c *RoutingController) DeleteRouting(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return

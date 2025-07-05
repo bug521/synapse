@@ -1,12 +1,15 @@
 package service
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"html/template"
 	"synapse/internal/model"
 	"synapse/internal/repository"
 	"synapse/pkg/notifier"
 
+	"github.com/tidwall/gjson"
 	"gorm.io/gorm"
 )
 
@@ -171,20 +174,36 @@ func (s *MessageService) sendToChannel(message *model.Message, routing *model.Ro
 
 // sendToTelegram 发送到Telegram
 func (s *MessageService) sendToTelegram(message *model.Message, channel *model.Channel, routing *model.Routing) error {
-	var cfg struct {
-		BotToken string `json:"botToken"`
-		ChatID   string `json:"chatId"`
-		Proxy    string `json:"proxy"`
-	}
+	var cfg model.TelegramConfig
 	b, _ := json.Marshal(channel.Credentials)
 	if err := json.Unmarshal(b, &cfg); err != nil {
 		return err
 	}
-	return notifier.SendTelegramMessage(notifier.TelegramConfig{
-		Token:  cfg.BotToken,
-		ChatID: cfg.ChatID,
-		Proxy:  cfg.Proxy,
-	}, message.Content)
+	contentBytes, _ := json.Marshal(message.Content)
+
+	variables := make(map[string]interface{})
+	for name, path := range routing.VariableMappings {
+		pathStr, ok := path.(string)
+		if !ok {
+			continue
+		}
+		variables[name] = gjson.GetBytes(contentBytes, pathStr).Value()
+	}
+	tmpl, err := template.New("message").Parse(routing.MessageTemplate)
+	if err != nil {
+		return err
+	}
+	var renderedMessage bytes.Buffer
+	if err := tmpl.Execute(&renderedMessage, variables); err != nil {
+		return err
+	}
+
+	return notifier.SendTelegramMessage(model.TelegramConfig{
+		BotToken:  cfg.BotToken,
+		ChatID:    cfg.ChatID,
+		Proxy:     cfg.Proxy,
+		ParseMode: cfg.ParseMode,
+	}, string(renderedMessage.Bytes()))
 }
 
 // sendToEmail 发送到Email
@@ -202,6 +221,9 @@ func (s *MessageService) sendToEmail(message *model.Message, channel *model.Chan
 	if err := json.Unmarshal(b, &cfg); err != nil {
 		return err
 	}
+	contentBytes, _ := json.Marshal(message.Content)
+
+	messageContent := string(contentBytes)
 	return notifier.SendEmail(notifier.EmailConfig{
 		Host:     cfg.SMTPHost,
 		Port:     cfg.SMTPPort,
@@ -210,7 +232,7 @@ func (s *MessageService) sendToEmail(message *model.Message, channel *model.Chan
 		From:     cfg.Sender,
 		To:       cfg.To,
 		Proxy:    cfg.Proxy,
-	}, message.Title, message.Content)
+	}, "test", messageContent)
 }
 
 // sendToSlack 发送到Slack
@@ -234,12 +256,14 @@ func (s *MessageService) sendToWebhook(message *model.Message, channel *model.Ch
 	if err := json.Unmarshal(b, &cfg); err != nil {
 		return err
 	}
+	contentBytes, _ := json.Marshal(message.Content)
+
 	resp, err := notifier.SendWebhook(notifier.WebhookConfig{
 		URL:     cfg.URL,
 		Method:  cfg.Method,
 		Headers: cfg.Headers,
 		Proxy:   cfg.Proxy,
-	}, []byte(message.Content))
+	}, contentBytes)
 	if err != nil {
 		return err
 	}

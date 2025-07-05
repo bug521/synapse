@@ -11,26 +11,26 @@
     </div>
 
     <!-- 主题信息 -->
-    <n-card title="主题信息" class="info-card">
-      <n-descriptions :column="2" bordered>
+    <n-card  class="info-card">
+      <n-descriptions  :column="2" bordered label-placement="left">
         <n-descriptions-item label="主题ID">{{ topic?.id }}</n-descriptions-item>
         <n-descriptions-item label="主题名称">{{ topic?.name }}</n-descriptions-item>
         <n-descriptions-item label="Webhook Key">
           <div class="webhook-key-display">
-            <span class="key-text">{{ topic?.webhook_key }}</span>
+            <span class="key-text">{{ topic?.webhookKey }}</span>
             <n-button size="tiny" type="primary" ghost @click="copyWebhookKey">
               复制
             </n-button>
           </div>
         </n-descriptions-item>
         <n-descriptions-item label="发送策略">
-          {{ getSendingStrategyText(topic?.sending_strategy) }}
+          {{ getSendingStrategyText(topic?.sendingStrategy) }}
         </n-descriptions-item>
         <n-descriptions-item label="执行模式">
-          {{ getExecutionModeText(topic?.execution_mode) }}
+          {{ getExecutionModeText(topic?.executionMode) }}
         </n-descriptions-item>
         <n-descriptions-item label="创建时间">
-          {{ topic?.created_at ? new Date(topic.created_at).toLocaleString() : '' }}
+          {{ topic?.createdAt ? new Date(topic.createdAt).toLocaleString() : '' }}
         </n-descriptions-item>
         <n-descriptions-item label="描述" :span="2">
           {{ topic?.description || '暂无描述' }}
@@ -58,11 +58,7 @@
     </n-card>
 
     <!-- 创建路由模态框 -->
-    <n-modal v-model:show="showCreateRoutingModal" preset="card" style="width: 700px">
-      <template #header>
-        <h3>添加路由规则</h3>
-      </template>
-      
+    <n-modal v-model:show="showCreateRoutingModal" title="添加路由规则" preset="card" style="width: 700px">
       <n-form
         ref="routingFormRef"
         :model="routingFormData"
@@ -71,9 +67,9 @@
         label-width="auto"
         require-mark-placement="right-hanging"
       >
-        <n-form-item label="选择通道" path="channel_id">
+        <n-form-item label="选择通道" path="channelId">
           <n-select
-            v-model:value="routingFormData.channel_id"
+            v-model:value="routingFormData.channelId"
             :options="channelOptions"
             placeholder="请选择通知通道"
             filterable
@@ -89,7 +85,7 @@
           />
         </n-form-item>
         
-        <n-form-item label="变量映射" path="variable_mappings">
+        <n-form-item label="变量映射" path="variableMappings">
           <n-input
             v-model:value="variableMappingsText"
             type="textarea"
@@ -98,9 +94,9 @@
           />
         </n-form-item>
         
-        <n-form-item label="消息模板" path="message_template">
+        <n-form-item label="消息模板" path="messageTemplate">
           <n-input
-            v-model:value="routingFormData.message_template"
+            v-model:value="routingFormData.messageTemplate"
             type="textarea"
             placeholder="请输入消息模板，支持变量替换，例如：&#10;仓库 {{.title}} 有新活动: {{.action}}"
             :rows="4"
@@ -132,9 +128,9 @@
         label-width="auto"
         require-mark-placement="right-hanging"
       >
-        <n-form-item label="选择通道" path="channel_id">
+        <n-form-item label="选择通道" path="channelId">
           <n-select
-            v-model:value="editRoutingFormData.channel_id"
+            v-model:value="editRoutingFormData.channelId"
             :options="channelOptions"
             placeholder="请选择通知通道"
             filterable
@@ -151,7 +147,7 @@
           />
         </n-form-item>
         
-        <n-form-item label="变量映射" path="variable_mappings">
+        <n-form-item label="变量映射" path="variableMappings">
           <n-input
             v-model:value="editVariableMappingsText"
             type="textarea"
@@ -160,9 +156,9 @@
           />
         </n-form-item>
         
-        <n-form-item label="消息模板" path="message_template">
+        <n-form-item label="消息模板" path="messageTemplate">
           <n-input
-            v-model:value="editRoutingFormData.message_template"
+            v-model:value="editRoutingFormData.messageTemplate"
             type="textarea"
             placeholder="请输入消息模板，支持变量替换"
             :rows="4"
@@ -203,7 +199,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, h } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useMessage } from 'naive-ui'
+import {NButton, useMessage} from 'naive-ui'
 import { topicApi, channelApi, routingApi, type Topic, type Channel, type Routing, type CreateRoutingRequest } from '../../api'
 
 const route = useRoute()
@@ -233,19 +229,19 @@ const deletingRouting = ref<Routing | null>(null)
 
 // 表单数据
 const routingFormData = reactive<CreateRoutingRequest>({
-  topic_id: 0,
-  channel_id: 0,
+  topicId: 0,
+  channelId: 0,
   priority: 0,
-  variable_mappings: {},
-  message_template: ''
+  variableMappings: {},
+  messageTemplate: ''
 })
 
 const editRoutingFormData = reactive<CreateRoutingRequest>({
-  topic_id: 0,
-  channel_id: 0,
+  topicId: 0,
+  channelId: 0,
   priority: 0,
-  variable_mappings: {},
-  message_template: ''
+  variableMappings: {},
+  messageTemplate: ''
 })
 
 // 计算属性
@@ -257,10 +253,10 @@ const channelOptions = computed(() => {
 })
 
 const variableMappingsText = computed({
-  get: () => JSON.stringify(routingFormData.variable_mappings, null, 2),
+  get: () => JSON.stringify(routingFormData.variableMappings, null, 2),
   set: (value: string) => {
     try {
-      routingFormData.variable_mappings = JSON.parse(value)
+      routingFormData.variableMappings = JSON.parse(value)
     } catch (e) {
       // 忽略解析错误
     }
@@ -268,10 +264,10 @@ const variableMappingsText = computed({
 })
 
 const editVariableMappingsText = computed({
-  get: () => JSON.stringify(editRoutingFormData.variable_mappings, null, 2),
+  get: () => JSON.stringify(editRoutingFormData.variableMappings, null, 2),
   set: (value: string) => {
     try {
-      editRoutingFormData.variable_mappings = JSON.parse(value)
+      editRoutingFormData.variableMappings = JSON.parse(value)
     } catch (e) {
       // 忽略解析错误
     }
@@ -280,12 +276,14 @@ const editVariableMappingsText = computed({
 
 // 表单验证规则
 const routingRules = {
-  channel_id: {
+  channelId: {
+    type: 'number',
     required: true,
     message: '请选择通知通道',
     trigger: 'change'
   },
   priority: {
+    type: 'number',
     required: true,
     message: '请输入优先级',
     trigger: 'blur'
@@ -296,10 +294,10 @@ const routingRules = {
 const routingColumns = [
   {
     title: '通道',
-    key: 'channel_id',
+    key: 'channelId',
     width: 200,
     render: (row: Routing) => {
-      const channel = channels.value.find(c => c.id === row.channel_id)
+      const channel = channels.value.find(c => c.id === row.channelId)
       return channel ? `${channel.name} (${channel.type})` : '未知通道'
     }
   },
@@ -310,19 +308,19 @@ const routingColumns = [
   },
   {
     title: '变量映射',
-    key: 'variable_mappings',
+    key: 'variableMappings',
     width: 200,
     render: (row: Routing) => {
-      const mappings = Object.keys(row.variable_mappings || {})
+      const mappings = Object.keys(row.variableMappings || {})
       return mappings.length > 0 ? mappings.join(', ') : '无'
     }
   },
   {
     title: '消息模板',
-    key: 'message_template',
+    key: 'messageTemplate',
     width: 300,
     render: (row: Routing) => {
-      return row.message_template || '使用默认模板'
+      return row.messageTemplate || '使用默认模板'
     }
   },
   {
@@ -330,9 +328,9 @@ const routingColumns = [
     key: 'actions',
     width: 150,
     render: (row: Routing) => {
-      return h('div', { class: 'action-buttons' }, [
+      return h('div', { class: 'custom-table-action-buttons' }, [
         h(
-          'n-button',
+          NButton,
           {
             size: 'small',
             type: 'info',
@@ -341,7 +339,7 @@ const routingColumns = [
           { default: () => '编辑' }
         ),
         h(
-          'n-button',
+            NButton,
           {
             size: 'small',
             type: 'error',
@@ -389,17 +387,20 @@ const loadRoutings = async () => {
 
 const handleCreateRouting = async () => {
   try {
-    await routingFormRef.value?.validate()
+    await routingFormRef.value?.validate((error: any) => {
+      console.log(error)
+    })
     routingSubmitting.value = true
     
     const topicId = parseInt(route.params.id as string)
-    routingFormData.topic_id = topicId
+    routingFormData.topicId = topicId
     
     await routingApi.createRouting(routingFormData)
     message.success('路由创建成功')
     showCreateRoutingModal.value = false
     loadRoutings()
   } catch (error: any) {
+    console.log(error)
     message.error('创建失败: ' + (error.message || '未知错误'))
   } finally {
     routingSubmitting.value = false
@@ -408,11 +409,11 @@ const handleCreateRouting = async () => {
 
 const handleEditRouting = (routing: Routing) => {
   editingRouting.value = routing
-  editRoutingFormData.topic_id = routing.topic_id
-  editRoutingFormData.channel_id = routing.channel_id
+  editRoutingFormData.topicId = routing.topicId
+  editRoutingFormData.channelId = routing.channelId
   editRoutingFormData.priority = routing.priority
-  editRoutingFormData.variable_mappings = { ...routing.variable_mappings }
-  editRoutingFormData.message_template = routing.message_template
+  editRoutingFormData.variableMappings = { ...routing.variableMappings }
+  editRoutingFormData.messageTemplate = routing.messageTemplate
   showEditRoutingModal.value = true
 }
 
@@ -424,12 +425,12 @@ const handleUpdateRouting = async () => {
     routingSubmitting.value = true
     
     await routingApi.updateRouting(
-      editingRouting.value.topic_id,
-      editingRouting.value.channel_id,
+      editingRouting.value.topicId,
+      editingRouting.value.channelId,
       {
         priority: editRoutingFormData.priority,
-        variable_mappings: editRoutingFormData.variable_mappings,
-        message_template: editRoutingFormData.message_template
+        variableMappings: editRoutingFormData.variableMappings,
+        messageTemplate: editRoutingFormData.messageTemplate
       }
     )
     message.success('路由更新成功')
@@ -453,8 +454,8 @@ const handleDeleteRouting = async () => {
   try {
     routingDeleting.value = true
     await routingApi.deleteRouting(
-      deletingRouting.value.topic_id,
-      deletingRouting.value.channel_id
+      deletingRouting.value.topicId,
+      deletingRouting.value.channelId
     )
     message.success('路由删除成功')
     showDeleteRoutingModal.value = false
@@ -467,9 +468,9 @@ const handleDeleteRouting = async () => {
 }
 
 const copyWebhookKey = () => {
-  if (!topic.value?.webhook_key) return
+  if (!topic.value?.webhookKey) return
   
-  navigator.clipboard.writeText(topic.value.webhook_key).then(() => {
+  navigator.clipboard.writeText(topic.value.webhookKey).then(() => {
     message.success('Webhook Key已复制到剪贴板')
   }).catch(() => {
     message.error('复制失败')

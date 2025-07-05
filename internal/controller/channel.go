@@ -39,7 +39,7 @@ type CreateChannelRequest struct {
 // @Failure 401 {object} utils.ErrorResponse
 // @Router /channels [post]
 func (c *ChannelController) CreateChannel(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -77,7 +77,7 @@ func (c *ChannelController) CreateChannel(ctx *gin.Context) {
 // @Failure 401 {object} utils.ErrorResponse
 // @Router /channels [get]
 func (c *ChannelController) GetChannels(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -106,7 +106,7 @@ func (c *ChannelController) GetChannels(ctx *gin.Context) {
 // @Failure 404 {object} utils.ErrorResponse
 // @Router /channels/{id} [get]
 func (c *ChannelController) GetChannel(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -149,7 +149,7 @@ type UpdateChannelRequest struct {
 // @Failure 404 {object} utils.ErrorResponse
 // @Router /channels/{id} [put]
 func (c *ChannelController) UpdateChannel(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -198,7 +198,7 @@ func (c *ChannelController) UpdateChannel(ctx *gin.Context) {
 // @Failure 404 {object} utils.ErrorResponse
 // @Router /channels/{id} [delete]
 func (c *ChannelController) DeleteChannel(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
+	userID, exists := ctx.Get("userId")
 	if !exists {
 		utils.ErrorResponse(ctx, http.StatusUnauthorized, "未授权", "用户信息不存在")
 		return
@@ -222,20 +222,20 @@ func (c *ChannelController) DeleteChannel(ctx *gin.Context) {
 // TestTelegramChannel 测试 Telegram 通道
 func TestTelegramChannel(ctx *gin.Context) {
 	type Req struct {
-		BotToken string `json:"botToken"`
-		ChatID   string `json:"chatId"`
+		BotToken string `json:"botToken" binding:"required"`
+		ChatID   string `json:"chatId" binding:"required"`
 		Proxy    string `json:"proxy"`
-		Content  string `json:"content"`
+		Content  string `json:"content" binding:"required"`
 	}
 	var req Req
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		utils.ErrorResponse(ctx, 400, "参数错误", err.Error())
 		return
 	}
-	err := notifier.SendTelegramMessage(notifier.TelegramConfig{
-		Token:  req.BotToken,
-		ChatID: req.ChatID,
-		Proxy:  req.Proxy,
+	err := notifier.SendTelegramMessage(model.TelegramConfig{
+		BotToken: req.BotToken,
+		ChatID:   req.ChatID,
+		Proxy:    req.Proxy,
 	}, req.Content)
 	if err != nil {
 		utils.ErrorResponse(ctx, 500, "发送失败", err.Error())

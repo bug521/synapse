@@ -82,6 +82,7 @@ func (s *TopicService) UpdateTopic(topic *model.Topic, userID uint64) error {
 
 	topic.UserID = userID                       // 确保用户ID不被修改
 	topic.WebhookKey = existingTopic.WebhookKey // 保持Webhook Key不变
+	topic.CreatedAt = existingTopic.CreatedAt
 	return s.topicRepo.Update(topic)
 }
 

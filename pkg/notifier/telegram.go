@@ -6,24 +6,20 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"synapse/internal/model"
 	"time"
 )
 
-type TelegramConfig struct {
-	Token  string
-	ChatID string
-	Proxy  string // 可选
-}
-
-func SendTelegramMessage(cfg TelegramConfig, message string) error {
-	if cfg.Token == "" || cfg.ChatID == "" {
+func SendTelegramMessage(cfg model.TelegramConfig, message string) error {
+	if cfg.BotToken == "" || cfg.ChatID == "" {
 		return errors.New("Token 和 ChatID 不能为空")
 	}
 
-	apiURL := "https://api.telegram.org/bot" + cfg.Token + "/sendMessage"
+	apiURL := "https://api.telegram.org/bot" + cfg.BotToken + "/sendMessage"
 	body := map[string]interface{}{
-		"chat_id": cfg.ChatID,
-		"text":    message,
+		"chat_id":    cfg.ChatID,
+		"text":       message,
+		"parse_mode": cfg.ParseMode,
 	}
 	jsonBody, _ := json.Marshal(body)
 

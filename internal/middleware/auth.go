@@ -33,7 +33,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		// 将用户ID存储到上下文中
-		ctx.Set("userID", claims.UserID)
+		ctx.Set("userId", claims.UserId)
 		ctx.Next()
 	}
 }

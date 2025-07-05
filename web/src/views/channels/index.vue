@@ -105,6 +105,12 @@
               placeholder="请输入发件人邮箱"
             />
           </n-form-item>
+          <n-form-item label="收件人" path="credentials.to">
+            <n-input
+                v-model:value="formData.credentials.to"
+                placeholder="请输入收件人邮箱"
+            />
+          </n-form-item>
         </template>
       </n-form>
       
@@ -285,7 +291,8 @@ const handleTypeChange = (type: string) => {
       smtpPort: 587,
       smtpUsername: '',
       smtpPassword: '',
-      sender: ''
+      sender: '',
+      to: '',
     }
   }
 }

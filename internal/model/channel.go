@@ -32,4 +32,5 @@ type EmailConfig struct {
 	SMTPUsername string `json:"smtpUsername"`
 	SMTPPassword string `json:"smtpPassword"`
 	Sender       string `json:"sender"`
+	To           string `json:"to"`
 }

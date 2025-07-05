@@ -22,6 +22,7 @@ type TelegramConfig struct {
 	BotToken  string `json:"botToken"`
 	ChatID    string `json:"chatId"`
 	ParseMode string `json:"parseMode"`
+	Proxy     string `json:"proxy"`
 }
 
 // email 配置（结构化）

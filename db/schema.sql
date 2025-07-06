@@ -84,6 +84,7 @@ CREATE TABLE IF NOT EXISTS routings (
     priority INT DEFAULT 0 COMMENT '优先级',
     variable_mappings JSON COMMENT '变量映射规则',
     message_template TEXT COMMENT '消息模板',
+    subject_template TEXT COMMENT '邮件主题模板',
     created_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
     updated_at DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
     deleted_at DATETIME(3) NULL COMMENT '删除时间',

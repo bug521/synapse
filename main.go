@@ -21,7 +21,7 @@ func main() {
 	cfg := config.GlobalConfig
 
 	// 2. 初始化日志
-	logger.InitLogger()
+	logger.InitLogger(cfg.Log.Level, cfg.Log.Path)
 	defer logger.Logger.Sync()
 	zap.L().Info("配置加载完成", zap.Any("config", cfg))
 
@@ -35,7 +35,9 @@ func main() {
 		cfg.Database.Charset,
 	)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logger.NewZapGormLogger(zap.L(), cfg.Log.Level),
+	})
 	if err != nil {
 		log.Fatalf("数据库连接失败: %v", err)
 	}

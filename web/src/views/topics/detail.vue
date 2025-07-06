@@ -94,6 +94,14 @@
           />
         </n-form-item>
         
+        <n-form-item label="邮件主题模板" v-if="isEmailChannel" path="subjectTemplate">
+          <n-input
+            v-model:value="routingFormData.subjectTemplate"
+            type="textarea"
+            placeholder="请输入邮件主题模板，支持变量替换，例如：&#10;仓库 {{.title}} 有新活动: {{.action}}"
+            :rows="2"
+          />
+        </n-form-item>        
         <n-form-item label="消息模板" path="messageTemplate">
           <n-input
             v-model:value="routingFormData.messageTemplate"
@@ -155,7 +163,14 @@
             :rows="6"
           />
         </n-form-item>
-        
+        <n-form-item label="邮件主题模板" v-if="isEmailChannel" path="subjectTemplate">
+          <n-input
+            v-model:value="editRoutingFormData.subjectTemplate"
+            type="textarea"
+            placeholder="请输入邮件主题模板，支持变量替换，例如：&#10;仓库 {{.title}} 有新活动: {{.action}}"
+            :rows="2"
+          />
+        </n-form-item>   
         <n-form-item label="消息模板" path="messageTemplate">
           <n-input
             v-model:value="editRoutingFormData.messageTemplate"
@@ -233,7 +248,8 @@ const routingFormData = reactive<CreateRoutingRequest>({
   channelId: 0,
   priority: 0,
   variableMappings: {},
-  messageTemplate: ''
+  messageTemplate: '',
+  subjectTemplate: ''
 })
 
 const editRoutingFormData = reactive<CreateRoutingRequest>({
@@ -241,7 +257,8 @@ const editRoutingFormData = reactive<CreateRoutingRequest>({
   channelId: 0,
   priority: 0,
   variableMappings: {},
-  messageTemplate: ''
+  messageTemplate: '',
+  subjectTemplate: ''
 })
 
 // 计算属性
@@ -252,26 +269,20 @@ const channelOptions = computed(() => {
   }))
 })
 
-const variableMappingsText = computed({
-  get: () => JSON.stringify(routingFormData.variableMappings, null, 2),
-  set: (value: string) => {
-    try {
-      routingFormData.variableMappings = JSON.parse(value)
-    } catch (e) {
-      // 忽略解析错误
-    }
-  }
-})
+const variableMappingsText = ref('{}');
 
-const editVariableMappingsText = computed({
-  get: () => JSON.stringify(editRoutingFormData.variableMappings, null, 2),
-  set: (value: string) => {
-    try {
-      editRoutingFormData.variableMappings = JSON.parse(value)
-    } catch (e) {
-      // 忽略解析错误
-    }
+const editVariableMappingsText = ref('{}');
+
+const isEmailChannel = computed(() => {
+  if (showCreateRoutingModal.value) {
+    const channel = channels.value.find(c => c.id === routingFormData.channelId)
+    return channel?.type === 'email'
   }
+  if (showEditRoutingModal.value) {
+    const channel = channels.value.find(c => c.id === editRoutingFormData.channelId)
+    return channel?.type === 'email'
+  }
+  return false
 })
 
 // 表单验证规则
@@ -387,12 +398,11 @@ const loadRoutings = async () => {
 
 const handleCreateRouting = async () => {
   try {
-    await routingFormRef.value?.validate((error: any) => {
-      console.log(error)
-    })
+    await routingFormRef.value?.validate()
     routingSubmitting.value = true
     
     const topicId = parseInt(route.params.id as string)
+    routingFormData.variableMappings = JSON.parse(variableMappingsText.value)
     routingFormData.topicId = topicId
     
     await routingApi.createRouting(routingFormData)
@@ -414,6 +424,8 @@ const handleEditRouting = (routing: Routing) => {
   editRoutingFormData.priority = routing.priority
   editRoutingFormData.variableMappings = { ...routing.variableMappings }
   editRoutingFormData.messageTemplate = routing.messageTemplate
+  
+  editVariableMappingsText.value = JSON.stringify(routing.variableMappings, null, 2)
   showEditRoutingModal.value = true
 }
 
@@ -423,14 +435,15 @@ const handleUpdateRouting = async () => {
   try {
     await editRoutingFormRef.value?.validate()
     routingSubmitting.value = true
-    
+    editRoutingFormData.variableMappings = JSON.parse(editVariableMappingsText.value)
     await routingApi.updateRouting(
       editingRouting.value.topicId,
       editingRouting.value.channelId,
       {
         priority: editRoutingFormData.priority,
         variableMappings: editRoutingFormData.variableMappings,
-        messageTemplate: editRoutingFormData.messageTemplate
+        messageTemplate: editRoutingFormData.messageTemplate,
+        subjectTemplate: editRoutingFormData.subjectTemplate
       }
     )
     message.success('路由更新成功')

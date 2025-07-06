@@ -2,7 +2,6 @@ package logger
 
 import (
 	"os"
-	"synapse/internal/config"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -11,12 +10,11 @@ import (
 
 var Logger *zap.Logger
 
-func InitLogger() {
-	cfg := config.GlobalConfig.Log
+func InitLogger(logLevel string, logPath string) {
 
 	// 设置日志级别
 	var level zapcore.Level
-	if err := level.UnmarshalText([]byte(cfg.Level)); err != nil {
+	if err := level.UnmarshalText([]byte(logLevel)); err != nil {
 		level = zapcore.InfoLevel
 	}
 
@@ -33,7 +31,7 @@ func InitLogger() {
 
 	// 文件日志轮转
 	fileWriter := zapcore.AddSync(&lumberjack.Logger{
-		Filename:   cfg.Path,
+		Filename:   logPath,
 		MaxSize:    100, // MB
 		MaxBackups: 7,
 		MaxAge:     30, // days

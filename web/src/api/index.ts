@@ -102,12 +102,14 @@ export interface CreateRoutingRequest {
   priority: number
   variableMappings: Record<string, any>
   messageTemplate: string
+  subjectTemplate?: string
 }
 
 export interface UpdateRoutingRequest {
   priority: number
   variableMappings: Record<string, any>
   messageTemplate: string
+  subjectTemplate?: string
 }
 
 // 通道API

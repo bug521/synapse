@@ -13,6 +13,7 @@ type Routing struct {
 	Priority         int            `gorm:"default:0;comment:优先级" json:"priority"`
 	VariableMappings JSON           `gorm:"type:json;comment:变量映射规则" json:"variableMappings"`
 	MessageTemplate  string         `gorm:"type:text;comment:消息模板" json:"messageTemplate"`
+	SubjectTemplate  string         `gorm:"type:text;comment:邮件主题模板" json:"subjectTemplate"`
 	CreatedAt        time.Time      `gorm:"type:datetime(3);default:CURRENT_TIMESTAMP(3);index;comment:接收时间" json:"createdAt"`
 	UpdatedAt        time.Time      `gorm:"type:datetime(3);default:CURRENT_TIMESTAMP(3);index;comment:更新时间" json:"updatedAt"`
 	DeletedAt        gorm.DeletedAt `gorm:"index" json:"-"`

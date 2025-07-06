@@ -25,6 +25,7 @@ type CreateRoutingRequest struct {
 	Priority         int                    `json:"priority"`
 	VariableMappings map[string]interface{} `json:"variableMappings"`
 	MessageTemplate  string                 `json:"messageTemplate"`
+	SubjectTemplate  string                 `json:"subjectTemplate"`
 }
 
 // CreateRouting 创建路由
@@ -58,6 +59,7 @@ func (c *RoutingController) CreateRouting(ctx *gin.Context) {
 		Priority:         req.Priority,
 		VariableMappings: model.JSON(req.VariableMappings),
 		MessageTemplate:  req.MessageTemplate,
+		SubjectTemplate:  req.SubjectTemplate,
 	}
 
 	if err := c.routingService.CreateRouting(routing, userID.(uint64)); err != nil {
@@ -142,6 +144,7 @@ type UpdateRoutingRequest struct {
 	Priority         int                    `json:"priority"`
 	VariableMappings map[string]interface{} `json:"variableMappings"`
 	MessageTemplate  string                 `json:"messageTemplate"`
+	SubjectTemplate  string                 `json:"subjectTemplate"`
 }
 
 // UpdateRouting 更新路由
@@ -192,6 +195,7 @@ func (c *RoutingController) UpdateRouting(ctx *gin.Context) {
 		Priority:         req.Priority,
 		VariableMappings: model.JSON(req.VariableMappings),
 		MessageTemplate:  req.MessageTemplate,
+		SubjectTemplate:  req.SubjectTemplate,
 	}
 
 	if err := c.routingService.UpdateRouting(routing, userID.(uint64)); err != nil {

@@ -227,14 +227,6 @@ const columns = [
             NButton,
           {
             size: 'small',
-            onClick: () => handleRegenerateKey(row)
-          },
-          { default: () => '重新生成Key' }
-        ),
-        h(
-            NButton,
-          {
-            size: 'small',
             type: 'info',
             onClick: () => handleEdit(row)
           },
